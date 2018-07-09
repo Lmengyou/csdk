@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="screen-orientation" content="portrait">
+        <title></title>
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <link href="css/ico.css" rel="stylesheet" type="text/css"></head>
+    </head>
+
+    <body>
+        <header>
+            <div class="title">
+                <img src="images/logo.jpg">
+            </div>
+        </header>
+        <!--vue实例-->
+        <div id="app">
+            <router-view></router-view>
+            <tab-bar></tab-bar>  
+        </div>
+        
+        <!------------------------------------------------------------------->
+        <!--路由1-->
+        <template id="rout1">
+            <div class="page1">
+                <h4>公司概述</h4>
+                <div class="wrap">
+                    <div class="cont">
+                        <p class="tc"><img src="images/20130625130149610.jpg" alt="" /></p>
+                        <p>北京燕云气象仪器设备销售中心隶属于北京市气象探测中心(原北京市气象技术装备中心)，经北京市气象局批准，于1999年正式成立，是一家面向社会，提供优质气象服务的专业仪器设备销售部门。</p>
+                        <p>
+                            中心主要从事气象仪器及气象观测设备的开发、建设安装、销售和租赁。销售产品广泛应用于气象、民航、国防、军事、工农业生产和科研等众多领域，一直以来，中心以专业、真诚、高效的服务理念得到客户的肯定、业界的推崇以及消费者的好评。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </template>
+        
+        <!--路由2-->
+        <template id="rout2">
+            <div class="page2">
+                <h4>产品列表</h4>
+                <div class="wrap">
+                    <ul class="product_list" >
+                    <li v-for="(item,index) in product_list">
+                        <router-link :to="{path:'/detail',query:{title:item.p_tit,img:item.img,cont:item.cont}}">
+                            <img :src="item.img">
+                        </router-link>
+                        <h5>{{item.p_tit}}</h5>
+                        <p class="desc">{{item.desc}}</p>
+                    </li>
+                </ul>
+                </div>
+                
+            </div>
+        </template>
+        
+        <!--路由3-->
+        <template id="rout3">
+            <div class="router3">
+                <h4>客户反馈</h4>
+                <form class="formA" action="">
+                    <p><input type="text" name="company" placeholder="公司名称(推荐使用中文)" v-model="form_data.company" /> <i>*</i></p>
+                    <p><input type="text" name="username" placeholder="姓名(推荐使用中文)" v-model="form_data.name" /> <i>*</i></p>
+                    <p><label><input type="radio" name="sex" checked value="m" v-model="form_data.sex" /> 男</label>&nbsp;&nbsp;&nbsp;<label><input type="radio" name="sex" value="w" v-model="form_data.sex" /> 女</label></p>
+                    <p><input type="text" name="tel" placeholder="电话" v-model="form_data.tel" /> <i>*</i></p>
+                    <p><input type="text" name="email" placeholder="邮箱" v-model="form_data.email" /></p>
+                    <p><input type="text" name="address" placeholder="地址" v-model="form_data.address" /></p>
+                    <p><textarea placeholder="反馈意见" v-model="form_data.cont"></textarea></p>
+                    <p><button type="button" @click="post">提交</button></p>
+                </form>
+            </div>
+        </template>
+        
+        <!--详情页-->       
+        <template id="detail">
+            <div class="wrap p_detail">
+                <router-link to="/p2" class="icon-arrow-left2"></router-link>
+                <h4>{{$route.query.title}}</h4>
+                <p class="tc"><img :src="$route.query.img"></p>
+                <p v-html="$route.query.cont"></p>
+            </div>
+        </template>
+        
+        
+        <!--底部tabbar---父组件-->
+        <template id="tabBar">
+            <div class="tabbar">
+                <ul>
+                    <li class="item">
+                        <router-link to="/p1">
+                            <span class="icon-sun-stroke"></span> 首页
+                        </router-link>
+                    </li>
+                    <li class="item">
+                        <router-link to="/p2">
+                            <span class="icon-moon-stroke"></span> 产品
+                        </router-link>
+                    </li>
+                    <li class="item">
+                        <router-link to="/p3">
+                            <span class="icon-rain"></span> 反馈
+                        </router-link>
+                    </li>
+                </ul>
+            </div>
+        </template>
+
+        <script src="js/vue.js"></script>
+        <script src="js/vue-router.js"></script>
+        <script src="js/vue-resource.js"></script>
+        <script src="js/main.js"></script>
+
+    </body>
+
+</html>
