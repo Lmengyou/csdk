@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style></style>
+    <script src="JQ/jquery-1.11.3.min.js"></script>
+    <style>
+        * { margin: 0;padding: 0;}
+        body { text-align: center; background-color: #191919; }
+        li {list-style: none;}
+        #box {position: relative;width: 980px;height: 500px;margin: 100px auto 10px;}
+        #box img{width: 980px;height: 500px;}
+        #box ul li {position: absolute;left: 0;top: 0;width: 980px;height: 500px;display: none;}
+        #show {position: absolute;left: 0;top: 0;width: 980px;height: 500px;perspective: 3000px;display: none;}
+        #show div {position: relative;width: 480px;height: 100px;float: left;transform-style: preserve-3d;}
+        #show div em { position: absolute;left: 0;top: 0;display: block;width: 480px;height: 100px; }
+        #show div .em1 {background: url("img/1.png");transform: translateX(5px);}
+        #show div .em2 {background: url("img/2.png");transform: translateZ(-5px) rotateX(-180deg);}
+        #show div span {position: absolute;right: 0;bottom: 0;background-color: #999;}
+        #show div span .span1 {width: 10px;height: 100px;transform-origin: right;transform: translateZ(-5px) rotateY(-90deg);}
+        #show div span .span2 {width: 480px;height: 10px;transform-origin: bottom;transform: translateZ(-5px) rotateX(-90deg);}
+        #show div.div2 .span1 {left: 0;transform-origin: left;transform: translateZ(5px) rotateY(90deg);}
+        @keyframes move1{
+            0%{
+                transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
+            }
+            60%{
+                transform: rotateX(0deg) rotateZ(0deg) rotateY(-60deg);
+            }
+            80%{
+                transform: rotateX(90deg) rotateZ(10deg) rotateY(-45deg);
+            }
+            100%{
+                transform: rotateX(180deg) rotateZ(0deg) rotateY(0deg);
+            }
+        }
+        @keyframes  move2{
+            0%{
+                transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
+            }
+            60%{
+                transform: rotateX(0deg) rotateZ(0deg) rotateY(60deg);
+            }
+            80%{
+                transform: rotateX(90deg) rotateZ(-10deg) rotateY(45deg);
+            }
+            100%{
+                transform: rotateX(180deg) rotateZ(0deg) rotateY(0deg);
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <ul>
+        <li><img src="images/img/2.jpg" alt="pho"/></li>
+        <li><img src="images/img/3.jpg" alt="pho"/></li>
+        <li><img src="images/img/5.jpg" alt="pho"/></li>
+        <li><img src="images/img/4.jpg" alt="pho"/></li>
+        <li><img src="images/img/6.jpg" alt="pho"/></li>
+    </ul>
+    <div id="show">
+    </div>
+</div>
+<input type="button" id="prev" value="上一张"/>
+<input type="button" id="next" value="下一张"/>
+</body>
+<script>
+        var oShow = document.getElementById("show");
+        var oBox = document.getElementById('box');
+        var prev = document.getElementById("prev");
+        var next = document.getElementById("next");
+        var oLi = oBox.getElementsByTagName("ul")[0].getElementsByTagName("li");
+        var oImg = oBox.getElementsByTagName("ul")[0].getElementsByTagName("img");
+        oShow.num = 0;
+        oShow.arr = [];
+        oShow.off = false;
+        for (var i = 0; i < 5; i++) {
+            var oDiv1 = document.createElement("div");
+            var oDiv2 = document.createElement("div");
+            oDiv2.className = "div2";
+            oDiv1.innerHTML = "<em class='em1' style='background-position: 0-" + i * 72 + "px'></em><span class='span1'></span>" +
+                    "<em class='em2' style='background-position: 0-" + i * 72 + "px'></em><span class='span2'></span>";
+            oDiv2.innerHTML = "<em class='em1' style='background-position: -480px+" + (5 - i) * 72 + "px'></em><span class='span1'></span>" +
+                    "<em class='em2' style='background-position: -480px+" + (5 - i) * 72 + "px'></em><span class='span2'></span>";
+            oShow.appendChild(oDiv1);
+            oShow.appendChild(oDiv2);
+        }
+        oLi[0].style.display = "block";
+        for (var i = 0; i < oImg.length; i++) {
+            oShow.arr.push(oImg[i].getAttribute("src"));
+        }
+            prev.onclick = function () {
+                if(oShow.off){
+                    return; 
+                }
+                oShow.off = true;
+                var next = oShow.num - 1;
+                if (next < 0) {
+                    next = oShow.arr.length - 1;
+                }
+                change(next);
+            };
+        next.onclick = function () {
+            if(oShow.off){
+                return;
+            }
+            oShow.off = true;
+            var next = oShow.num + 1;
+            if (next >= oShow.arr.length) {
+                next = 0;
+            }
+            change(next);
+        };
+        function change(next) {
+            var oEm1 = oShow.getElementsByClassName("em1");
+            var oEm2 = oShow.getElementsByClassName("em2");
+            var oDiv = oShow.getElementsByTagName("div");
+            for (var i = 0; i < oEm1.length; i++) {
+                oEm1[i].style.backgroundImage = "url(" + oShow.arr[oShow.num] + ")";
+                oEm2[i].style.backgroundImage = "url(" + oShow.arr[next] + ")";
+            }
+            oShow.style.display = "block";
+            oLi[oShow.num].style.display = "none";
+            for (var i = 0; i < oDiv.length; i+=2) {
+                var time = (i+1)*50;
+                oDiv[i].style.transform = "rotateX(0deg)";
+                oDiv[i + 1].style.transform = "rotateX(0deg)";
+                setTimer(oDiv[i], time,"move1");
+                setTimer(oDiv[i + 1], time,"move2")
+            }
+            setTimeout(function(){
+
+                oShow.num = next;
+                oLi[oShow.num].style.display = "block";
+                oShow.style.display = "none";
+                oShow.off = false;
+            },(oDiv.length*50+1500))
+
+        }
+        function setTimer(obj,time,name){
+            obj.timer = setTimeout(function(){
+                clearTimeout(obj.timer);
+                obj.style.animation = name + " 1.5s";
+                obj.style.transform = "rotateX(180deg)";
+
+                obj.timer = setTimeout(function(){
+                    obj.style.animation = "";
+                    clearTimeout(obj.timer);
+                    obj.timer = null;
+                },1500);
+            },time)
+        }
+</script>
+</html>

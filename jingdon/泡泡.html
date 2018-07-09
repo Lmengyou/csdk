@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{margin: 0;padding: 0;}
+			html,body{height:100vh;width: 100w;}
+			canvas{height: vh;width: 100vw;background: #000;overflow: hidden;}
+		</style>
+	</head>
+	<body>
+		<canvas id="cvs"></canvas>
+	</body>
+	<script type="text/javascript">
+		var cvs=document.getElementById("cvs")
+		var ctx=cvs.getContext('2d')
+		var w=window.innerWidth
+		var h=window.innerHeight
+		var time
+		var count
+		var arc=300
+		var speed=20
+		var size=7
+		var arr=new Array;
+		var mouse={x:0,y:0}
+		var colors=['red','#f57900','yellow','#ce5c00','#5c3566','green','blue','yellogreen','#f98904','#2cf904','#04f9df','#f904eb']
+		cvs.setAttribute('width',w)
+		cvs.setAttribute('height',h)
+		function create(){
+			time=0;
+			count=0;
+			for(var i=0;i<arc;i++){
+				arr[i]={
+					x:Math.ceil(Math.random()*w),
+					y:Math.ceil(Math.random()*h),
+					disx:Math.random()*5-1,
+					disy:Math.random()*2-1,
+					c:colors[Math.floor(Math.random()*colors.length)],
+					size:Math.random()*size
+				}
+			}
+		}
+		function run(){
+			ctx.clearRect(0,0,w,h)
+			cvs.addEventListener('mousemove',function(ev){
+				mouse.x=ev.clientX
+				mouse.y=ev.clientY
+			},false)
+			for(var i=0;i<arc;i++){
+				var li=arr[i]
+				var distance=distances(mouse,arr[i])
+				distance=Math.max(Math.min(25-(distance/10),10),1)
+				ctx.beginPath()
+				ctx.arc(li.x,li.y,li.size*distance,0,Math.PI*2)
+				ctx.fillStyle=li.c
+				ctx.strokeStyle=li.c
+				if(i%2==0){
+					ctx.fill()
+				}else{
+					ctx.stroke()
+				}
+				li.x=li.x+li.disx*(time*0.05);
+				li.y=li.y+li.disy*(time*0.05);
+				if(li.x>w){li.x=0}
+				if(li.y>h){li.y=0}
+				if(li.x<0){li.x=w}
+				if(li.y<0){li.y=h}
+			}
+			if(time<speed){
+				time++
+			}
+			setTimeout(run,1000/60)
+		}
+		function distances(p1,p2){
+			var dx=p2.x-p1.x;
+			var dy=p2.y-p1.y;
+			return Math.sqrt(dx*dx+dy*dy)
+		}
+		create();
+		run()
+	</script>
+</html>
